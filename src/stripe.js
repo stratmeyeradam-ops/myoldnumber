@@ -16,14 +16,14 @@ export async function createCheckoutSession({ userId, userEmail, tierId, origin 
   const params = new URLSearchParams();
   params.append('mode', 'subscription');
   params.append('payment_method_types[0]', 'card');
-  params.append('customer_email', userEmail);
+  if (userEmail) params.append('customer_email', userEmail);
   params.append('line_items[0][price_data][currency]', 'usd');
   params.append('line_items[0][price_data][product_data][name]', plan.name);
   params.append('line_items[0][price_data][product_data][description]', 'Continuous phone number monitoring, aging scans, and community board access.');
   params.append('line_items[0][price_data][unit_amount]', String(plan.cents));
   params.append('line_items[0][price_data][recurring][interval]', 'month');
   params.append('line_items[0][quantity]', '1');
-  params.append('metadata[user_id]', userId);
+  if (userId) params.append('metadata[user_id]', userId);
   params.append('metadata[tier]', tierId);
   params.append('success_url', `${origin}/tracking?success=Subscription+activated+successfully!`);
   params.append('cancel_url', `${origin}/pricing`);

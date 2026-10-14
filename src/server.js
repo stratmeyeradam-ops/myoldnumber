@@ -301,14 +301,13 @@ const server = http.createServer(async (req, res) => {
 
     // 6. Stripe Checkout & Webhook
     if (pathname === '/api/checkout' && method === 'POST') {
-      if (!user) return redirect('/login');
       const body = await parseBody(req);
       const tierId = body.tier;
       const origin = `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`;
       try {
         const checkoutUrl = await createCheckoutSession({
-          userId: user.id,
-          userEmail: user.email,
+          userId: user?.id || null,
+          userEmail: user?.email || null,
           tierId,
           origin
         });
