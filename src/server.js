@@ -1,7 +1,7 @@
 // src/server.js — Pure native Node 22 HTTP server (Zero-middleware, pure speed)
 import http from 'node:http';
 
-import { readFileSync, existsSync, createReadStream } from 'node:fs';
+import { readFileSync, existsSync, statSync, createReadStream } from 'node:fs';
 import { join, extname } from 'node:path';
 import { db } from './db.js';
 import { hashPassword, verifyPassword, createSession, getSessionUser, deleteSession } from './auth.js';
@@ -73,8 +73,9 @@ const server = http.createServer(async (req, res) => {
   const method = req.method;
 
   // Static file serving from public/
-  const staticPath = join(PUBLIC_DIR, pathname);
-  if (existsSync(staticPath) && !pathname.endsWith('/') && pathname !== '/') {
+  const relPath = pathname.replace(/^\/+/, "");
+  const staticPath = join(PUBLIC_DIR, relPath);
+  if (relPath && existsSync(staticPath) && !statSync(staticPath).isDirectory()) {
     const ext = extname(staticPath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
     res.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': 'public, max-age=86400' });
@@ -87,6 +88,7 @@ const server = http.createServer(async (req, res) => {
 
   function html(content, title, desc = '') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    if (method === 'HEAD') return res.end();
     res.end(renderLayout({ title, description: desc, path: pathname, user, content }));
   }
 
@@ -97,13 +99,15 @@ const server = http.createServer(async (req, res) => {
     res.end();
   }
 
+  const isRead = method === 'GET' || method === 'HEAD';
+
   try {
     // 1. Home & Lookup
-    if (pathname === '/' && method === 'GET') {
+    if (pathname === '/' && isRead) {
       return html(renderHomePage({}), 'Reverse Phone Lookup & Number Allocation Intelligence');
     }
 
-    if (pathname === '/lookup' && method === 'GET') {
+    if (pathname === '/lookup' && isRead) {
       const q = parsed.searchParams.get('q') || '';
       const digits = digitsOnly(q);
       if (digits.length !== 10) {
@@ -114,11 +118,11 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 2. Guides
-    if (pathname === '/guides' && method === 'GET') {
+    if (pathname === '/guides' && isRead) {
       return html(renderGuidesIndex(), 'Phone Number Recycling & Recovery Guides');
     }
 
-    if (pathname.startsWith('/guides/') && method === 'GET') {
+    if (pathname.startsWith('/guides/') && isRead) {
       const slug = pathname.replace('/guides/', '');
       const guide = getGuideBySlug(slug);
       if (!guide) {
@@ -129,12 +133,12 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 3. Pricing & Subscriptions
-    if (pathname === '/pricing' && method === 'GET') {
+    if (pathname === '/pricing' && isRead) {
       return html(renderPricingPage({ user }), 'Monitoring Subscription Plans ($5, $10, $20)');
     }
 
     // 4. Message Board
-    if (pathname === '/board' && method === 'GET') {
+    if (pathname === '/board' && isRead) {
       const categorySlug = parsed.searchParams.get('category');
       const categories = db.prepare('SELECT id, slug, title, description FROM board_categories ORDER BY sort_order ASC').all();
       
