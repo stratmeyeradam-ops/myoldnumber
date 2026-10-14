@@ -20,6 +20,15 @@ import { renderLoginPage, renderSignupPage, renderAccountPage } from './views/au
 const PORT = process.env.PORT || 4320;
 const PUBLIC_DIR = join(process.cwd(), 'public');
 
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
