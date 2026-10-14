@@ -1,0 +1,23 @@
+{
+  "name": "myoldnumber",
+  "short_name": "myoldnumber",
+  "description": "Reverse lookup and number recovery for the North American Numbering Plan.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070809",
+  "theme_color": "#070809",
+  "icons": [
+    {
+      "src": "/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

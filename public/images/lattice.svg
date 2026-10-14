@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#070809"/>
+  <g opacity="0.9">
+    <rect x="80" y="90" width="28" height="28" rx="4" fill="#1a1d21"/>
+    <rect x="116" y="90" width="28" height="28" rx="4" fill="#1a1d21"/>
+    <rect x="152" y="90" width="28" height="28" rx="4" fill="#2DD4BF"/>
+    <rect x="188" y="90" width="28" height="28" rx="4" fill="#1a1d21"/>
+    <rect x="224" y="90" width="28" height="28" rx="4" fill="#2a2f33"/>
+    <rect x="260" y="90" width="28" height="28" rx="4" fill="#1a1d21"/>
+    <rect x="80" y="126" width="28" height="28" rx="4" fill="#1a1d21"/>
+    <rect x="116" y="126" width="28" height="28" rx="4" fill="#3a3f46"/>
+    <rect x="152" y="126" width="28" height="28" rx="4" fill="#1a1d21"/>
+    <rect x="188" y="126" width="28" height="28" rx="4" fill="#d4a574" opacity="0.7"/>
+    <rect x="224" y="126" width="28" height="28" rx="4" fill="#1a1d21"/>
+    <rect x="260" y="126" width="28" height="28" rx="4" fill="#1a1d21"/>
+  </g>
+  <path d="M40 420 C 220 360, 360 500, 560 430 S 880 340, 1160 410" stroke="#2DD4BF" stroke-opacity="0.35" stroke-width="1.5"/>
+  <path d="M20 510 C 240 560, 400 430, 640 500 S 940 560, 1180 470" stroke="#E8EAEB" stroke-opacity="0.12" stroke-width="1"/>
+  <text x="80" y="340" fill="#E8EAEB" font-family="IBM Plex Sans, sans-serif" font-size="56" font-weight="500">myoldnumber</text>
+  <text x="80" y="382" fill="#8B9198" font-family="IBM Plex Sans, sans-serif" font-size="22">NANP reverse lookup · pool monitoring · retrieval</text>
+</svg>
