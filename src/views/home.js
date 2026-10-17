@@ -82,7 +82,12 @@ export function renderHomePage({ result = null, error = null }) {
             <p style="color: var(--muted); font-size: 14px; line-height: 1.5; margin-bottom: 16px;">
               Subscribe to track 1, 3, or 5 numbers for $5, $10, or $20/month. We monitor pooling status and alert you the moment a line exits aging.
             </p>
-            <a href="/pricing" style="font-size: 14px; font-weight: 600;">View Monitoring Plans &rarr;</a>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+              <a href="https://buy.stripe.com/14A8wO0LJ2sF4QJeHi0kE0o" class="btn" style="padding: 8px 12px; font-size: 13px;">Watcher — $5/mo</a>
+              <a href="https://buy.stripe.com/fZudR88ebffr6YR1Uw0kE0p" class="btn" style="padding: 8px 12px; font-size: 13px; background: linear-gradient(135deg, #38bdf8, #2563eb);">Member — $10/mo</a>
+              <a href="https://buy.stripe.com/28E4gygKH8R3erjbv60kE0q" class="btn" style="padding: 8px 12px; font-size: 13px;">Pro — $20/mo</a>
+            </div>
+            <a href="/pricing" style="font-size: 14px; font-weight: 600;">Compare All Plans &rarr;</a>
           </div>
         </div>
       </div>

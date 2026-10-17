@@ -21,7 +21,12 @@ export function renderLayout({ title, description, path = '/', user = null, cont
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="My Old Number">
   <meta property="og:title" content="${escapeHtml(title)} — My Old Number">
-  <meta property="og:description" content="${escapeHtml(description)}">
+  <meta property="og:description" content="${escapeHtml(description || "Free reverse phone lookup, North American numbering allocation intelligence, and automated number recycling monitoring.")}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escapeHtml(title)} — My Old Number">
+  <meta name="twitter:description" content="${escapeHtml(description || "Free reverse phone lookup, North American numbering allocation intelligence, and automated number recycling monitoring.")}">
+  <meta name="twitter:image" content="https://myoldnumber.com/images/dialpd.jpg">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"My Old Number","url":"https://myoldnumber.com","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://myoldnumber.com/lookup?number={search_term_string}"},"query-input":"required name=search_term_string"}}</script>
   <meta property="og:url" content="https://myoldnumber.com${path}">
   <meta property="og:image" content="https://myoldnumber.com/images/dialpd.jpg">
 

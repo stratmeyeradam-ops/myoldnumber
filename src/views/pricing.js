@@ -51,10 +51,7 @@ export function renderPricingPage({ user = null }) {
             <li style="color: var(--faint);">&times; Community board posting</li>
           </ul>
         </div>
-        <form action="/api/checkout" method="POST">
-          <input type="hidden" name="tier" value="t5">
-          <button type="submit" class="btn" style="width: 100%;">Subscribe for $5/mo</button>
-        </form>
+        <a href="https://buy.stripe.com/14A8wO0LJ2sF4QJeHi0kE0o" class="btn" style="width: 100%; text-align: center; display: inline-block;">Subscribe for $5/mo</a>
       </div>
 
       <!-- $10 Member (Featured) -->
@@ -72,10 +69,7 @@ export function renderPricingPage({ user = null }) {
             <li>&check; Unlimited reverse lookups</li>
           </ul>
         </div>
-        <form action="/api/checkout" method="POST">
-          <input type="hidden" name="tier" value="t10">
-          <button type="submit" class="btn" style="width: 100%; background: linear-gradient(135deg, #38bdf8, #2563eb);">Subscribe for $10/mo</button>
-        </form>
+        <a href="https://buy.stripe.com/fZudR88ebffr6YR1Uw0kE0p" class="btn" style="width: 100%; text-align: center; display: inline-block; background: linear-gradient(135deg, #38bdf8, #2563eb);">Subscribe for $10/mo</a>
       </div>
 
       <!-- $20 Pro Collector -->
@@ -92,10 +86,7 @@ export function renderPricingPage({ user = null }) {
             <li>&check; Priority customer support</li>
           </ul>
         </div>
-        <form action="/api/checkout" method="POST">
-          <input type="hidden" name="tier" value="t20">
-          <button type="submit" class="btn" style="width: 100%;">Subscribe for $20/mo</button>
-        </form>
+        <a href="https://buy.stripe.com/28E4gygKH8R3erjbv60kE0q" class="btn" style="width: 100%; text-align: center; display: inline-block;">Subscribe for $20/mo</a>
       </div>
 
     </div>

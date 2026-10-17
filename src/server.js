@@ -55,6 +55,15 @@ function parseCookies(req) {
   return list;
 }
 
+function readRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on("data", chunk => chunks.push(chunk));
+    req.on("end", () => resolve(Buffer.concat(chunks)));
+    req.on("error", reject);
+  });
+}
+
 function parseBody(req) {
   return new Promise((resolve, reject) => {
     let body = '';
@@ -266,6 +275,34 @@ const server = http.createServer(async (req, res) => {
 
     // 5. Number Tracking & Quotas
     if (pathname === '/tracking' && method === 'GET') {
+      const sessionId = parsed.searchParams.get('session_id');
+      if (!user && sessionId) {
+        try {
+          const resp = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
+            headers: { 'Authorization': `Bearer ${process.env.STRIPE_SECRET_KEY}` }
+          });
+          const session = await resp.json();
+          const email = (session.customer_details?.email || session.customer_email || '').toLowerCase().trim();
+          if (email) {
+            let u = db.prepare('SELECT * FROM users WHERE lower(email) = ?').get(email);
+            if (!u) {
+              const crypto = await import('node:crypto');
+              const uid = crypto.randomUUID();
+              const name = session.customer_details?.name || email.split('@')[0];
+              const dummyHash = crypto.createHash('sha256').update(crypto.randomBytes(32)).digest('hex');
+              const tier = session?.metadata?.tier || 't5';
+              db.prepare('INSERT INTO users (id, email, password_hash, name, tier, stripe_customer_id, stripe_sub_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(uid, email, dummyHash, name, tier, session.customer || '', session.subscription || '', Date.now());
+              u = db.prepare('SELECT * FROM users WHERE id = ?').get(uid);
+            }
+            if (u) {
+              const token = createSession(u.id);
+              return redirect('/tracking?success=' + encodeURIComponent('Subscription activated!'), 302, `session_token=${token}; Path=/; Max-Age=2592000; HttpOnly; SameSite=Lax`);
+            }
+          }
+        } catch (e) {
+          console.warn('[myoldnumber-sync-error]', e.message);
+        }
+      }
       const prefillNumber = parsed.searchParams.get('number') || '';
       const tracked = user ? db.prepare('SELECT * FROM tracked_numbers WHERE user_id = ? ORDER BY created_at DESC').all(user.id) : [];
       return html(renderTrackingPage({ 
@@ -309,9 +346,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 6. Stripe Checkout & Webhook
-    if (pathname === '/api/checkout' && method === 'POST') {
-      const body = await parseBody(req);
-      const tierId = body.tier;
+    if (pathname === '/api/checkout' && (method === 'POST' || method === 'GET')) {
+      const body = method === 'POST' ? await parseBody(req) : {};
+      const tierId = body.tier || parsed.searchParams.get('tier');
       const origin = `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`;
       try {
         const checkoutUrl = await createCheckoutSession({
@@ -326,15 +363,16 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    if (pathname === '/api/webhook/stripe' && method === 'POST') {
-      const rawBody = await parseBody(req);
+    if ((pathname === '/api/webhook/stripe' || pathname === '/api/stripe/webhook') && method === 'POST') {
+      const rawBuffer = await readRawBody(req);
       const sig = req.headers['stripe-signature'];
-      const secret = process.env.STRIPE_WEBHOOK_SECRET || 'whsec_test';
+      const secret = process.env.STRIPE_WEBHOOK_SECRET || '';
       try {
-        await handleWebhookEvent(rawBody, sig, secret);
+        await handleWebhookEvent(rawBuffer, sig, secret);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ received: true }));
       } catch (err) {
+        console.error('[myoldnumber-webhook-error]', err.message);
         res.writeHead(400, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ error: err.message }));
       }
@@ -347,7 +385,7 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/login' && method === 'POST') {
       const body = await parseBody(req);
-      const row = db.prepare('SELECT id, password_hash FROM users WHERE email = ?').get(body.email?.toLowerCase().trim());
+      const row = db.prepare('SELECT id, password_hash FROM users WHERE email = ?').get((body.email || '').toLowerCase().trim());
       if (!row || !verifyPassword(body.password, row.password_hash)) {
         return html(renderLoginPage({ error: 'Invalid email or password.' }), 'Sign In');
       }

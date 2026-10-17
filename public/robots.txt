@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /account
+Sitemap: https://myoldnumber.com/sitemap.xml
